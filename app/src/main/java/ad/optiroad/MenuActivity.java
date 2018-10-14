@@ -8,7 +8,7 @@ import android.widget.Button;
 
 public class MenuActivity extends AppCompatActivity {
 
-    private Button buttonPlanRoute;
+    private Button buttonPlanRoute, buttonFavourites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +22,23 @@ public class MenuActivity extends AppCompatActivity {
                 openPlanRouteActivity();
             }
         });
+
+        buttonFavourites = (Button) findViewById(R.id.buttonFavourites);
+        buttonFavourites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFavouritesActivity();
+            }
+        });
+}
+
+    public void openPlanRouteActivity() {
+        Intent i = new Intent(this, PlanRouteActivity.class);
+        startActivity(i);
     }
 
-    public void openPlanRouteActivity(){
-        Intent i = new Intent(this, PlanRouteActivity.class);
+    public void openFavouritesActivity() {
+        Intent i = new Intent(this, FavouritesActivity.class);
         startActivity(i);
     }
 }
