@@ -9,7 +9,7 @@
     tools:context=".MenuActivity">
 
     <Button
-        android:id="@+id/button_plan_route"
+        android:id="@+id/buttonPlanRoute"
         android:layout_width="167dp"
         android:layout_height="52dp"
         android:layout_marginEnd="8dp"
@@ -28,24 +28,24 @@
         tools:text="Plan route" />
 
     <Button
-        android:id="@+id/button_favourites_routes"
-        android:layout_width="262dp"
-        android:layout_height="51dp"
+        android:id="@+id/buttonFavourites"
+        android:layout_width="187dp"
+        android:layout_height="47dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="60dp"
         android:background="@drawable/round_button"
-        android:text="Favourites Routes"
+        android:text="Favourites"
         android:textColor="@android:color/white"
         android:textSize="24sp"
         android:typeface="serif"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_recent_route" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonRecentRoute" />
 
     <Button
-        android:id="@+id/button_recent_route"
+        android:id="@+id/buttonRecentRoute"
         android:layout_width="200dp"
         android:layout_height="47dp"
         android:layout_marginEnd="8dp"
@@ -59,7 +59,7 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_plan_route" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonPlanRoute" />
 
     <TextView
         android:id="@+id/text_menu"
