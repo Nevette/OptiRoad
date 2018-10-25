@@ -24,7 +24,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_menu"
+        app:layout_constraintTop_toBottomOf="@+id/textMenu"
         tools:text="Plan route" />
 
     <Button
@@ -62,9 +62,9 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonPlanRoute" />
 
     <TextView
-        android:id="@+id/text_menu"
-        android:layout_width="94dp"
-        android:layout_height="51dp"
+        android:id="@+id/textMenu"
+        android:layout_width="99dp"
+        android:layout_height="37dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="36dp"
