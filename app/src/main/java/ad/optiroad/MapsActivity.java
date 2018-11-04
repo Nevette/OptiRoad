@@ -19,6 +19,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private String startingPoint;
+    private String destination;
     private static final String TAG = "MapsActivity";
     Geocoder coder;
 
@@ -34,6 +35,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         // Get starting point passed in PlanRouteActivity
         startingPoint = (String) getIntent().getSerializableExtra("startingPoint");
+        destination = (String) getIntent().getSerializableExtra("destination");
     }
 
     @Override
@@ -42,12 +44,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         try {
             List<Address> positionList = coder.getFromLocationName(startingPoint, 1);
+            List<Address> positionList2 = coder.getFromLocationName(destination, 1);
             if (!positionList.isEmpty()) {
                 LatLng address = addressToLatLng(positionList.get(0));
-                mMap.addMarker(new MarkerOptions().position(address).title("Marker in " + startingPoint));
+                mMap.addMarker(new MarkerOptions().position(address).title(startingPoint));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(address));
             }
-
+            if (!positionList2.isEmpty()) {
+                LatLng address = addressToLatLng(positionList2.get(0));
+                mMap.addMarker(new MarkerOptions().position(address).title(destination));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(address));
+            }
         }
         catch (Exception e){
             Toast toast=Toast.makeText(getApplicationContext(),"Cannot find given address",Toast.LENGTH_SHORT);

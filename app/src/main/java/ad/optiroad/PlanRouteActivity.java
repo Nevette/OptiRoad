@@ -10,7 +10,7 @@ import android.widget.EditText;
 public class PlanRouteActivity extends AppCompatActivity {
 
     private Button buttonNavigate;
-    private EditText inputStartingPoint;
+    private EditText inputStartingPoint, inputDestination;
     private static final String TAG = "PlanRouteActivity";
 
 
@@ -30,6 +30,17 @@ public class PlanRouteActivity extends AppCompatActivity {
                 }
             }});
 
+        inputDestination = (EditText) findViewById(R.id.inputDestination);
+        inputDestination.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Delete content of input field and set it to empty
+                String destination = inputDestination.getText().toString();
+                if (destination.equals("Type your destination")) {
+                    inputDestination.setText("");
+                }
+            }});
+
         buttonNavigate = (Button) findViewById(R.id.buttonNavigate);
         buttonNavigate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,6 +54,7 @@ public class PlanRouteActivity extends AppCompatActivity {
         Intent i = new Intent(this, MapsActivity.class);
         // Pass starting point to MapsActivity
         i.putExtra("startingPoint", inputStartingPoint.getText().toString());
+        i.putExtra("destination", inputDestination.getText().toString());
         startActivity(i);
     }
 }
