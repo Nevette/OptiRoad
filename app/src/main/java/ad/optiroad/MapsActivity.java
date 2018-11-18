@@ -13,6 +13,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -20,6 +21,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private String startingPoint;
     private String destination;
+    private ArrayList<String> array;
     private static final String TAG = "MapsActivity";
     Geocoder coder;
 
@@ -33,33 +35,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        // Get starting point passed in PlanRouteActivity
-        startingPoint = (String) getIntent().getSerializableExtra("startingPoint");
-        destination = (String) getIntent().getSerializableExtra("destination");
+        // Get points passed in PlanRouteActivity
+        array = (ArrayList<String>) getIntent().getSerializableExtra("pointsList");
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        for (String location: array){
+            try {
+                List<Address> positionList = coder.getFromLocationName(location, 1);
+                if (!positionList.isEmpty()) {
+                    LatLng address = addressToLatLng(positionList.get(0));
+                    mMap.addMarker(new MarkerOptions().position(address).title(location));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(address));
+                }
+            }
+            catch (Exception e){
+                Toast toast=Toast.makeText(getApplicationContext(),"Cannot find given address",Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        }
 
-        try {
-            List<Address> positionList = coder.getFromLocationName(startingPoint, 1);
-            List<Address> positionList2 = coder.getFromLocationName(destination, 1);
-            if (!positionList.isEmpty()) {
-                LatLng address = addressToLatLng(positionList.get(0));
-                mMap.addMarker(new MarkerOptions().position(address).title(startingPoint));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(address));
-            }
-            if (!positionList2.isEmpty()) {
-                LatLng address = addressToLatLng(positionList2.get(0));
-                mMap.addMarker(new MarkerOptions().position(address).title(destination));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(address));
-            }
-        }
-        catch (Exception e){
-            Toast toast=Toast.makeText(getApplicationContext(),"Cannot find given address",Toast.LENGTH_SHORT);
-            toast.show();
-        }
     }
     private LatLng addressToLatLng(Address address){
         return new LatLng(address.getLatitude(), address.getLongitude());

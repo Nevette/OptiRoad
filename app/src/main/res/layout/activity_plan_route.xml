@@ -1,74 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:fillViewport="true">
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/planRouteLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <EditText
-        android:id="@+id/inputStartingPoint"
-        android:layout_width="wrap_content"
-        android:layout_height="51dp"
-        android:layout_alignEnd="@+id/buttonNavigate"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="12dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Type your starting point"
-        android:textColor="#ffffff"
-        android:textSize="20sp"
-        android:textStyle="italic"
-        tools:text="Type your starting point" />
 
-    <EditText
-        android:id="@+id/inputDestination"
-        android:layout_width="wrap_content"
-        android:layout_height="47dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="485dp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/inputStartingPoint"
-        android:layout_marginTop="128dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Type your destination"
-        android:textAlignment="textStart"
-        android:textColor="#ffffff"
-        android:textSize="20sp"
-        android:textStyle="italic"
-        tools:text="Type your destination" />
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/buttonNavigate"
-        android:layout_width="131dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="37dp"
-        android:background="@drawable/round_button"
-        android:text="Navigate"
-        android:textColor="@android:color/white"
-        android:textSize="20sp" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:fillViewport="true">
 
-    <ImageButton
-        android:id="@+id/buttonAddNext"
-        android:layout_width="34dp"
-        android:layout_height="34dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/inputStartingPoint"
-        android:layout_marginTop="78dp"
-        android:background="@android:color/background_light"
-        android:scaleType="centerCrop"
-        app:srcCompat="@drawable/add_button" />
+            <RelativeLayout
+                android:id="@+id/nextPointsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="0dp">
+
+            </RelativeLayout>
+        </ScrollView>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_alignTop="@+id/inputDestination"
-        android:orientation="vertical" />
+        android:layout_marginBottom="12dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/buttonAddNext"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_weight="1"
+            android:alpha="100"
+            android:background="@drawable/round_button_2"
+            android:text="Add next point"
+            android:textSize="20sp"
+            android:visibility="visible" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/buttonNavigate"
+            android:layout_width="131dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_weight="1"
+            android:background="@drawable/round_button"
+            android:alpha="100"
+            android:text="Navigate"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+    </LinearLayout>
+
 </RelativeLayout>
-</ScrollView>
