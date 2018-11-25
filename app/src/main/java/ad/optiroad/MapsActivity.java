@@ -19,8 +19,6 @@ import java.util.List;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private String startingPoint;
-    private String destination;
     private ArrayList<String> array;
     private static final String TAG = "MapsActivity";
     Geocoder coder;
@@ -45,14 +43,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (String location: array){
             try {
                 List<Address> positionList = coder.getFromLocationName(location, 1);
-                if (!positionList.isEmpty()) {
+                if ((positionList).size() <= 0)
+                {
+                    Toast toast=Toast.makeText(getApplicationContext(),"Address was not given. Please try again.", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+                else {
                     LatLng address = addressToLatLng(positionList.get(0));
                     mMap.addMarker(new MarkerOptions().position(address).title(location));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(address));
                 }
             }
             catch (Exception e){
-                Toast toast=Toast.makeText(getApplicationContext(),"Cannot find given address",Toast.LENGTH_SHORT);
+                Toast toast=Toast.makeText(getApplicationContext(),"Cannot find given address", Toast.LENGTH_SHORT);
                 toast.show();
             }
         }
