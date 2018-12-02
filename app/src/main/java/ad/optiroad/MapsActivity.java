@@ -75,42 +75,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             GeoApiContext context = new GeoApiContext.Builder()
                     .apiKey("AIzaSyBrPt88vvoPDDn_imh-RzCXl5Ha2F2LYig")
                     .build();
+            for (int x=1; x<= pointsList.size(); x++) {
+                try {
+                    DirectionsResult res = DirectionsApi.newRequest(context)
+                            .mode(TravelMode.DRIVING)
+                            .origin(getModelLatLng(pointsList.get(x-1)))
+                            .destination(getModelLatLng(pointsList.get(x)))
+                            .await();
+                    //Loop through legs and steps to get encoded polylines of each step
+                    if (res.routes != null && res.routes.length > 0) {
+                        DirectionsRoute route = res.routes[0];
 
-            try {
-                DirectionsResult res = DirectionsApi.newRequest(context)
-                        .mode(TravelMode.DRIVING)
-                        .origin(getModelLatLng(pointsList.get(0)))
-                        .destination(getModelLatLng(pointsList.get(1)))
-                        .await();
-                //Loop through legs and steps to get encoded polylines of each step
-                if (res.routes != null && res.routes.length > 0) {
-                    DirectionsRoute route = res.routes[0];
-
-                    if (route.legs != null) {
-                        for (int i = 0; i < route.legs.length; i++) {
-                            DirectionsLeg leg = route.legs[i];
-                            if (leg.steps != null) {
-                                for (int j = 0; j < leg.steps.length; j++) {
-                                    DirectionsStep step = leg.steps[j];
-                                    if (step.steps != null && step.steps.length > 0) {
-                                        for (int k = 0; k < step.steps.length; k++) {
-                                            DirectionsStep step1 = step.steps[k];
-                                            EncodedPolyline points1 = step1.polyline;
-                                            if (points1 != null) {
-                                                //Decode polyline and add points to list of route coordinates
-                                                List<com.google.maps.model.LatLng> coords1 = points1.decodePath();
-                                                for (com.google.maps.model.LatLng coord1 : coords1) {
-                                                    path.add(new LatLng(coord1.lat, coord1.lng));
+                        if (route.legs != null) {
+                            for (int i = 0; i < route.legs.length; i++) {
+                                DirectionsLeg leg = route.legs[i];
+                                if (leg.steps != null) {
+                                    for (int j = 0; j < leg.steps.length; j++) {
+                                        DirectionsStep step = leg.steps[j];
+                                        if (step.steps != null && step.steps.length > 0) {
+                                            for (int k = 0; k < step.steps.length; k++) {
+                                                DirectionsStep step1 = step.steps[k];
+                                                EncodedPolyline points1 = step1.polyline;
+                                                if (points1 != null) {
+                                                    //Decode polyline and add points to list of route coordinates
+                                                    List<com.google.maps.model.LatLng> coords1 = points1.decodePath();
+                                                    for (com.google.maps.model.LatLng coord1 : coords1) {
+                                                        path.add(new LatLng(coord1.lat, coord1.lng));
+                                                    }
                                                 }
                                             }
-                                        }
-                                    } else {
-                                        EncodedPolyline points = step.polyline;
-                                        if (points != null) {
-                                            //Decode polyline and add points to list of route coordinates
-                                            List<com.google.maps.model.LatLng> coords = points.decodePath();
-                                            for (com.google.maps.model.LatLng coord : coords) {
-                                                path.add(new LatLng(coord.lat, coord.lng));
+                                        } else {
+                                            EncodedPolyline points = step.polyline;
+                                            if (points != null) {
+                                                //Decode polyline and add points to list of route coordinates
+                                                List<com.google.maps.model.LatLng> coords = points.decodePath();
+                                                for (com.google.maps.model.LatLng coord : coords) {
+                                                    path.add(new LatLng(coord.lat, coord.lng));
+                                                }
                                             }
                                         }
                                     }
@@ -118,20 +119,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             }
                         }
                     }
-                }
 
-            } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage());
+                } catch (Exception ex) {
+                    Log.e(TAG, ex.getLocalizedMessage());
+                }
+                //Draw the polyline
+                if (path.size() > 0) {
+                    PolylineOptions opts = new PolylineOptions().addAll(path).color(Color.RED).width(6);
+                    mMap.addPolyline(opts);
+                }
+                mMap.getUiSettings().setZoomControlsEnabled(true);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pointsList.get(0), 6));
             }
-            //Draw the polyline
-            if (path.size() > 0) {
-                PolylineOptions opts = new PolylineOptions().addAll(path).color(Color.RED).width(6);
-                mMap.addPolyline(opts);
-            }
-            mMap.getUiSettings().setZoomControlsEnabled(true);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pointsList.get(0), 6));
         }
-        }
+    }
 
     private LatLng addressToLatLng(Address address) {
         return new LatLng(address.getLatitude(), address.getLongitude());
