@@ -30,7 +30,7 @@ public class MenuActivity extends AppCompatActivity {
                 openFavouritesActivity();
             }
         });
-}
+    }
 
     public void openPlanRouteActivity() {
         Intent i = new Intent(this, PlanRouteActivity.class);

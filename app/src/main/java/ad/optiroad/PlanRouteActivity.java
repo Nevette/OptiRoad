@@ -29,7 +29,7 @@ public class PlanRouteActivity extends AppCompatActivity {
         createNewInputPoint();
 
         buttonAddNextPoint = (Button) findViewById(R.id.buttonAddNext);
-        buttonAddNextPoint.setOnClickListener(new View.OnClickListener(){
+        buttonAddNextPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 createNewInputPoint();
@@ -54,50 +54,50 @@ public class PlanRouteActivity extends AppCompatActivity {
     }
 
     public void createNewInputPoint() {
-            final EditText newPoint = new EditText(PlanRouteActivity.this);
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-            if (pointsList.isEmpty()) {
-                int id = 990;
-                newPoint.setId(id);
-                String text = "Type your starting point";
-                newPoint.setText(text);
-                newPoint.setText(text);
-                newPoint.setOnClickListener(new EditText.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Delete content of input field and set it to empty
-                        String startingPointText = newPoint.getText().toString();
-                        if (startingPointText.equals("Type your starting point")) {
-                            newPoint.setText("");
-                        }
+        final EditText newPoint = new EditText(PlanRouteActivity.this);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+        if (pointsList.isEmpty()) {
+            int id = 990;
+            newPoint.setId(id);
+            String text = "Type your starting point";
+            newPoint.setText(text);
+            newPoint.setText(text);
+            newPoint.setOnClickListener(new EditText.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Delete content of input field and set it to empty
+                    String startingPointText = newPoint.getText().toString();
+                    if (startingPointText.equals("Type your starting point")) {
+                        newPoint.setText("");
                     }
-                });
-                pointsList.add(id);
-                layout.addView(newPoint, params);
-            }
-            else {
-                int lastPoint = pointsList.get(pointsList.size() -1 );
-                params.addRule(RelativeLayout.BELOW, lastPoint);
-                int id = lastPoint + 1;
-                String text = "Type next point";
-                newPoint.setText(text);
-                newPoint.setOnClickListener(new EditText.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Delete content of input field and set it to empty
-                        String startingPointText = newPoint.getText().toString();
-                        if (startingPointText.equals("Type next point")) {
-                            newPoint.setText("");
-                        }
+                }
+            });
+            pointsList.add(id);
+            layout.addView(newPoint, params);
+        } else {
+            int lastPoint = pointsList.get(pointsList.size() - 1);
+            params.addRule(RelativeLayout.BELOW, lastPoint);
+            int id = lastPoint + 1;
+            String text = "Type next point";
+            newPoint.setText(text);
+            newPoint.setOnClickListener(new EditText.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Delete content of input field and set it to empty
+                    String startingPointText = newPoint.getText().toString();
+                    if (startingPointText.equals("Type next point")) {
+                        newPoint.setText("");
                     }
-                });
-                newPoint.setId(id);
-                pointsList.add(id);
-                layout.addView(newPoint, params);
-            }
+                }
+            });
+            newPoint.setId(id);
+            pointsList.add(id);
+            layout.addView(newPoint, params);
+        }
     }
+
     public ArrayList<String> getContent() {
         ArrayList<String> locations = new ArrayList<>();
         for (int id : pointsList) {
