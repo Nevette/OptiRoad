@@ -61,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     LatLng address = addressToLatLng(positionList.get(0));
                     LatLng point = new LatLng(address.latitude, address.longitude);
                     pointsList.add(point);
-                     mMap.addMarker(new MarkerOptions().position(address).title(location));
+                    mMap.addMarker(new MarkerOptions().position(address).title(location));
                 }
             } catch (Exception e) {
                 Toast toast = Toast.makeText(getApplicationContext(), "Cannot find given address", Toast.LENGTH_SHORT);
@@ -73,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             //Execute Directions API request
             GeoApiContext context = new GeoApiContext.Builder()
-                    .apiKey("AIzaSyBrPt88vvoPDDn_imh-RzCXl5Ha2F2LYig")
+                    .apiKey("api_key")
                     .build();
             for (int x=1; x<= pointsList.size(); x++) {
                 try {
@@ -83,42 +83,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .destination(getModelLatLng(pointsList.get(x)))
                             .await();
                     //Loop through legs and steps to get encoded polylines of each step
-                    if (res.routes != null && res.routes.length > 0) {
-                        DirectionsRoute route = res.routes[0];
-
-                        if (route.legs != null) {
-                            for (int i = 0; i < route.legs.length; i++) {
-                                DirectionsLeg leg = route.legs[i];
-                                if (leg.steps != null) {
-                                    for (int j = 0; j < leg.steps.length; j++) {
-                                        DirectionsStep step = leg.steps[j];
-                                        if (step.steps != null && step.steps.length > 0) {
-                                            for (int k = 0; k < step.steps.length; k++) {
-                                                DirectionsStep step1 = step.steps[k];
-                                                EncodedPolyline points1 = step1.polyline;
-                                                if (points1 != null) {
-                                                    //Decode polyline and add points to list of route coordinates
-                                                    List<com.google.maps.model.LatLng> coords1 = points1.decodePath();
-                                                    for (com.google.maps.model.LatLng coord1 : coords1) {
-                                                        path.add(new LatLng(coord1.lat, coord1.lng));
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            EncodedPolyline points = step.polyline;
-                                            if (points != null) {
-                                                //Decode polyline and add points to list of route coordinates
-                                                List<com.google.maps.model.LatLng> coords = points.decodePath();
-                                                for (com.google.maps.model.LatLng coord : coords) {
-                                                    path.add(new LatLng(coord.lat, coord.lng));
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    getEncodedPolylines(res, path);
 
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getLocalizedMessage());
@@ -140,5 +105,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private String getModelLatLng(LatLng location) {
         return String.valueOf(location.latitude) + "," + location.longitude;
+    }
+
+    private void getEncodedPolylines(DirectionsResult res, List<LatLng> path){
+        if (res.routes != null && res.routes.length > 0) {
+            DirectionsRoute route = res.routes[0];
+
+            if (route.legs != null) {
+                for (int i = 0; i < route.legs.length; i++) {
+                    DirectionsLeg leg = route.legs[i];
+                    if (leg.steps != null) {
+                        for (int j = 0; j < leg.steps.length; j++) {
+                            DirectionsStep step = leg.steps[j];
+                            if (step.steps != null && step.steps.length > 0) {
+                                for (int k = 0; k < step.steps.length; k++) {
+                                    DirectionsStep step1 = step.steps[k];
+                                    EncodedPolyline points1 = step1.polyline;
+                                    if (points1 != null) {
+                                        //Decode polyline and add points to list of route coordinates
+                                        List<com.google.maps.model.LatLng> coords1 = points1.decodePath();
+                                        for (com.google.maps.model.LatLng coord1 : coords1) {
+                                            path.add(new LatLng(coord1.lat, coord1.lng));
+                                        }
+                                    }
+                                }
+                            } else {
+                                EncodedPolyline points = step.polyline;
+                                if (points != null) {
+                                    //Decode polyline and add points to list of route coordinates
+                                    List<com.google.maps.model.LatLng> coords = points.decodePath();
+                                    for (com.google.maps.model.LatLng coord : coords) {
+                                        path.add(new LatLng(coord.lat, coord.lng));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
