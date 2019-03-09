@@ -32,7 +32,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String TAG = "MapsActivity";
     Geocoder coder;
     private GoogleMap mMap;
-    private ArrayList<String> array;
+    private List<String> locationsList;
     private List<LatLng> pointsList = new ArrayList<>();
 
     @Override
@@ -45,13 +45,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         // Get points passed in PlanRouteActivity
-        array = (ArrayList<String>) getIntent().getSerializableExtra("pointsList");
+        List<String> unorderedLocations = (ArrayList<String>) getIntent().getSerializableExtra("pointsList");
+
+        locationsList = new SolveProblem().orderLocations(unorderedLocations);
+        Log.d("Order", "LOCATIONS: " + locationsList);
+        Toast toast = Toast.makeText(getApplicationContext(), "Locations: " + locationsList, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        for (String location : array) {
+        for (String location : locationsList) {
             try {
                 List<Address> positionList = coder.getFromLocationName(location, 1);
                 if ((positionList).size() <= 0) {
@@ -64,7 +69,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.addMarker(new MarkerOptions().position(address).title(location));
                 }
             } catch (Exception e) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Cannot find given address", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), "Cannot find given address", Toast.LENGTH_LONG);
                 toast.show();
             }
 
@@ -73,7 +78,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             //Execute Directions API request
             GeoApiContext context = new GeoApiContext.Builder()
-                    .apiKey("api_key")
+                    .apiKey("AIzaSyBrPt88vvoPDDn_imh-RzCXl5Ha2F2LYig")
                     .build();
             for (int x=1; x<= pointsList.size(); x++) {
                 try {

@@ -19,6 +19,14 @@ public class TSProblem {
         new TSProblem().run();
     }
 
+    public List<Integer> runAlgorithm(int[][] distanceMatrix){
+        neighborhoodMatrix = distanceMatrix;
+        numberOfVertices = distanceMatrix.length;
+        findShortestPath();
+        bestPath.add(0);
+        return bestPath;
+    }
+
     public void run(){
         findShortestPath();
         System.out.println("best distance2: " + bestDistance);
