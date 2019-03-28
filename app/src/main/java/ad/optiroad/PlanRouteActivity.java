@@ -86,21 +86,20 @@ public class PlanRouteActivity extends AppCompatActivity {
     public void createNewInputPoint() {
         final EditText newPoint = new EditText(PlanRouteActivity.this);
         RelativeLayout.LayoutParams params = createLayoutForUserInput();
+        int id;
 
         if (pointsList.isEmpty()) {
-            int id = createInputForStartingPoint(newPoint);
+            id = createInputForStartingPoint(newPoint);
             setIdForNewInput(newPoint, id);
             clearStartingPointInput(newPoint);
-            addIdToPointsList(id);
-            addInputViewToLayout(newPoint, params);
         } else {
             int lastPoint = pointsList.get(pointsList.size() - 1);
-            int id = createNextPointInput(params, newPoint, lastPoint);
+            id = createNextPointInput(params, newPoint, lastPoint);
             clearNextPointInput(newPoint);
             setIdForNewInput(newPoint, id);
-            addIdToPointsList(id);
-            addInputViewToLayout(newPoint, params);
         }
+        addIdToPointsList(id);
+        addInputViewToLayout(newPoint, params);
     }
 
     private void addInputViewToLayout(final EditText newPoint, RelativeLayout.LayoutParams params){

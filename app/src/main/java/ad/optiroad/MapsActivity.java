@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
+import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
@@ -24,6 +25,7 @@ import com.google.maps.model.DirectionsStep;
 import com.google.maps.model.EncodedPolyline;
 import com.google.maps.model.TravelMode;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String TAG = "MapsActivity";
     Geocoder coder;
     private GoogleMap mMap;
-    private List<String> locationsList;
+    private List<String> sortedLocations;
     private List<LatLng> pointsList = new ArrayList<>();
 
     @Override
@@ -40,69 +42,92 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         coder = new Geocoder(this);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        // Get points passed in PlanRouteActivity
-        List<String> unorderedLocations = (ArrayList<String>) getIntent().getSerializableExtra("pointsList");
+        createMapFragment();
 
-        locationsList = new SolveProblem().orderLocations(unorderedLocations);
-        Log.d("Order", "LOCATIONS: " + locationsList);
-        Toast toast = Toast.makeText(getApplicationContext(), "Locations: " + locationsList, Toast.LENGTH_SHORT);
-        toast.show();
+        List<String> unorderedLocations = getUnorderedLocationsList();
+        sortedLocations = sortLocationList(unorderedLocations);
+
+        Log.d("Order", "LOCATIONS: " + sortedLocations);
+        createAndDisplayToast("Locations:" + sortedLocations);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        for (String location : locationsList) {
+        for (String location : sortedLocations) {
             try {
                 List<Address> positionList = coder.getFromLocationName(location, 1);
                 if ((positionList).size() <= 0) {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Address was not given. Please try again.", Toast.LENGTH_SHORT);
-                    toast.show();
+                    createAndDisplayToast("Address was not given. Please try again.");
                 } else {
-                    LatLng address = addressToLatLng(positionList.get(0));
-                    LatLng point = new LatLng(address.latitude, address.longitude);
+                    LatLng point = addressToLatLng(positionList.get(0));
                     pointsList.add(point);
-                    mMap.addMarker(new MarkerOptions().position(address).title(location));
+                    mMap.addMarker(new MarkerOptions().position(point).title(location));
                 }
             } catch (Exception e) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Cannot find given address", Toast.LENGTH_LONG);
-                toast.show();
+                createAndDisplayToast("Cannot find given address");
             }
 
-            //Define list to get all latlng for the route
-            List<LatLng> path = new ArrayList();
+            List<LatLng> pathToDraw = new ArrayList();
 
-            //Execute Directions API request
-            GeoApiContext context = new GeoApiContext.Builder()
-                    .apiKey("AIzaSyBrPt88vvoPDDn_imh-RzCXl5Ha2F2LYig")
-                    .build();
-            for (int x=1; x<= pointsList.size(); x++) {
+            GeoApiContext geoApiContext = getGeoApiContext();
+
+            for (int locationPoint=1; locationPoint<= pointsList.size(); locationPoint++) {
                 try {
-                    DirectionsResult res = DirectionsApi.newRequest(context)
-                            .mode(TravelMode.DRIVING)
-                            .origin(getModelLatLng(pointsList.get(x-1)))
-                            .destination(getModelLatLng(pointsList.get(x)))
-                            .await();
-                    //Loop through legs and steps to get encoded polylines of each step
-                    getEncodedPolylines(res, path);
-
-                } catch (Exception ex) {
+                    DirectionsResult directionRequestResult = requestDirection(geoApiContext, locationPoint);
+                    getEncodedPolylines(directionRequestResult, pathToDraw);
+                }
+                catch (Exception ex) {
                     Log.e(TAG, ex.getLocalizedMessage());
                 }
-                //Draw the polyline
-                if (path.size() > 0) {
-                    PolylineOptions opts = new PolylineOptions().addAll(path).color(Color.RED).width(6);
-                    mMap.addPolyline(opts);
-                }
+                drawPolyline(pathToDraw);
                 mMap.getUiSettings().setZoomControlsEnabled(true);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pointsList.get(0), 6));
             }
         }
     }
+
+    private GeoApiContext getGeoApiContext (){
+        return new GeoApiContext.Builder().apiKey("api_key").build();
+    }
+
+    public DirectionsResult requestDirection (GeoApiContext geoApiContext, int locationPoint)
+            throws ApiException, InterruptedException, IOException {
+        return DirectionsApi.newRequest(geoApiContext)
+                .mode(TravelMode.DRIVING)
+                .origin(getModelLatLng(pointsList.get(locationPoint-1)))
+                .destination(getModelLatLng(pointsList.get(locationPoint)))
+                .await();
+    }
+
+    public void drawPolyline(List<LatLng> path){
+        if (path.size() > 0) {
+            PolylineOptions opts = new PolylineOptions().addAll(path).color(Color.RED).width(6);
+            mMap.addPolyline(opts);
+        }
+    }
+
+    public void createAndDisplayToast(String toastText){
+        Toast toast = Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    public void createMapFragment(){
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+    }
+
+    public List<String> getUnorderedLocationsList() {
+        // Get points passed in PlanRouteActivity
+        return (ArrayList<String>) getIntent().getSerializableExtra("pointsList");
+    }
+
+    public List<String> sortLocationList(List<String> unorderedLocations){
+        return new SolveProblem().orderLocations(unorderedLocations);
+    }
+
 
     private LatLng addressToLatLng(Address address) {
         return new LatLng(address.getLatitude(), address.getLongitude());
@@ -113,6 +138,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void getEncodedPolylines(DirectionsResult res, List<LatLng> path){
+        //Loop through legs and steps to get encoded polylines of each step
         if (res.routes != null && res.routes.length > 0) {
             DirectionsRoute route = res.routes[0];
 
