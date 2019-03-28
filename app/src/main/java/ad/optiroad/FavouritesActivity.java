@@ -16,77 +16,85 @@ import java.util.List;
 public class FavouritesActivity extends AppCompatActivity {
 
     private Context context;
-    private LinearLayout savedRoutes;
+    private LinearLayout favouritesRoutesLayout;
     private Database db;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_favourites);
-
         context = this.getBaseContext();
         db = new Database(getBaseContext());
-
-        savedRoutes = (LinearLayout) findViewById(R.id.favourites_routes_list);
-
-        refresh();
+        favouritesRoutesLayout = (LinearLayout) findViewById(R.id.favourites_routes_list);
+        initializeFavourites();
     }
 
-    public void refresh(){
-        savedRoutes.removeAllViews();
+    public void initializeFavourites(){
+        favouritesRoutesLayout.removeAllViews();
 
-        List<SavedRoutes> routesList = new ArrayList<>();
+        List<FavouritesRoutes> routesList = new ArrayList<>();
         routesList.addAll(db.returnAllRoutes());
 
-        for (SavedRoutes route: routesList){
+        for (FavouritesRoutes route: routesList){
             LinearLayout row = new LinearLayout(context);
-            row.setLayoutParams(new LinearLayout.LayoutParams
-                    (LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            row.setOrientation(LinearLayout.HORIZONTAL);
+            createLayoutForFavouritesRoutes(row);
 
             Button label = new Button(this);
-            label.setBackgroundResource(R.drawable.round_button);
-            label.setTextSize(18);
-            label.setClickable(true);
-            label.setText(route.getTitle());
-            savedRoutes.addView(row);
-            row.addView(label);
+            createAndAddRouteButton(label, row, route);
+            favouritesRoutesLayout.addView(row);
 
             Button delete = new Button(this);
-            delete.setBackgroundResource(R.drawable.round_button);
-            delete.setTextSize(18);
-            delete.setText("Delete");
-            delete.setClickable(true);
-            row.addView(delete);
+            createAndAddDeleteButton(delete, row);
 
-            label.setOnClickListener(openNote(route));
-            delete.setOnClickListener(deleteNote(route));
+            delete.setOnClickListener(deleteRowFromFavourites(route));
+            label.setOnClickListener(openSavedRoute(route));
         }
     }
 
-    private View.OnClickListener deleteNote(final SavedRoutes route){
+    private View.OnClickListener deleteRowFromFavourites(final FavouritesRoutes routeToDelete){
         return new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                db.deleteRoute(route);
-                refresh();
+                db.deleteRoute(routeToDelete);
+                initializeFavourites();
             }
         };
     }
 
-    private View.OnClickListener openNote(final SavedRoutes route){
+    private View.OnClickListener openSavedRoute(final FavouritesRoutes savedRouteToOpen){
         return new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                newRoute(route);
+                openSavedRouteInPlanningMode(savedRouteToOpen);
             }
         };
     }
 
-    public void newRoute(SavedRoutes route){
+    public void openSavedRouteInPlanningMode(FavouritesRoutes savedRouteToOpen){
         Intent i = new Intent(this, PlanRouteActivity.class);
-        i.putExtra("Route", route);
+        i.putExtra("Route", savedRouteToOpen);
         startActivity(i);
+    }
+
+    private void createAndAddDeleteButton(Button delete, LinearLayout row){
+        delete.setBackgroundResource(R.drawable.round_button);
+        delete.setTextSize(18);
+        delete.setText("Delete");
+        delete.setClickable(true);
+        row.addView(delete);
+    }
+
+    private void createAndAddRouteButton(Button label, LinearLayout row, FavouritesRoutes route){
+        label.setBackgroundResource(R.drawable.round_button);
+        label.setTextSize(18);
+        label.setClickable(true);
+        label.setText(route.getTitle());
+        row.addView(label);
+    }
+
+    private void createLayoutForFavouritesRoutes(LinearLayout row){
+        row.setLayoutParams(new LinearLayout.LayoutParams
+                (LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        row.setOrientation(LinearLayout.HORIZONTAL);
     }
 }

@@ -15,7 +15,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String DATABASE = "Database";
     private static final Integer DATABASE_VERSION = 1;
 
-    private static final String ROUTES_TABLE = "notesTable";
+    private static final String ROUTES_TABLE = "routesTable";
     private static final String ROUTE_ID = "id";
     private static final String ROUTE_TITLE = "title";
     private static final String ROUTE_POINTS = "content";
@@ -26,27 +26,27 @@ public class Database extends SQLiteOpenHelper {
         super(context, DATABASE, null, DATABASE_VERSION);
     }
 
-    public void addRoute(SavedRoutes route){
+    public void addRoute(FavouritesRoutes route){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ROUTE_TITLE, route.getTitle());
-        values.put(ROUTE_POINTS, route.getContent());
+        values.put(ROUTE_POINTS, route.getSavedRouteContent());
         db.insert(ROUTES_TABLE, null, values);
         db.close();
     }
 
-    public void saveRoute(SavedRoutes route){
+    public void saveRoute(FavouritesRoutes route){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(ROUTE_TITLE, route.getTitle());
-        values.put(ROUTE_POINTS, route.getContent());
+        values.put(ROUTE_POINTS, route.getSavedRouteContent());
 
         db.update(ROUTES_TABLE, values, "id = ?", new String[] {route.getId().toString()});
         db.close();
     }
 
-    public void deleteRoute(SavedRoutes route){
+    public void deleteRoute(FavouritesRoutes route){
         SQLiteDatabase db = this.getWritableDatabase();
         String sql = "delete from " + ROUTES_TABLE + " where id = " + route.getId().toString();
         System.out.println(sql);
@@ -54,15 +54,15 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
-    public List<SavedRoutes> returnAllRoutes(){
-        List<SavedRoutes> favouritesRoutesList = new ArrayList<>();
+    public List<FavouritesRoutes> returnAllRoutes(){
+        List<FavouritesRoutes> favouritesRoutesList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         String sql = "select * from " + ROUTES_TABLE;
         Cursor cursor = db.rawQuery(sql, null);
 
         if (cursor != null && cursor.moveToFirst()){
             do {
-                SavedRoutes route = new SavedRoutes();
+                FavouritesRoutes route = new FavouritesRoutes();
                 route.setId(Long.parseLong(cursor.getString(0)));
                 route.setTitle(cursor.getString(1));
                 route.setContent(cursor.getString(2));

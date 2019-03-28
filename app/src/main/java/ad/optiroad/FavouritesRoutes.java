@@ -1,8 +1,9 @@
 package ad.optiroad;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
-public class SavedRoutes implements Serializable {
+public class FavouritesRoutes implements Serializable {
 
     private Long id;
     private String title;
@@ -24,7 +25,7 @@ public class SavedRoutes implements Serializable {
         this.title = title;
     }
 
-    public String getContent(){
+    public String getSavedRouteContent(){
         return content;
     }
 

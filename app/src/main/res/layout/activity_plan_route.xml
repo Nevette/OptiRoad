@@ -48,14 +48,22 @@
             android:layout_weight="1"
             android:alpha="100"
             android:background="@drawable/round_button_2"
-            android:text="Add next point"
-            android:textSize="20sp"
+            android:text="Add next"
+            android:textSize="19sp"
             android:visibility="visible" />
 
-        <Space
-            android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/buttonSave"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_weight="1"
+            android:alpha="100"
+            android:background="@drawable/round_button_2"
+            android:text="Save"
+            android:textSize="19sp"
+            android:visibility="visible" />
 
         <Button
             android:id="@+id/buttonNavigate"
@@ -64,11 +72,11 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_weight="1"
-            android:background="@drawable/round_button"
             android:alpha="100"
+            android:background="@drawable/round_button"
             android:text="Navigate"
             android:textColor="@android:color/white"
-            android:textSize="20sp" />
+            android:textSize="19sp" />
     </LinearLayout>
 
 </RelativeLayout>
