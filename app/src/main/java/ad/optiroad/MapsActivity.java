@@ -72,12 +72,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             GeoApiContext geoApiContext = getGeoApiContext();
 
-            for (int locationPoint=1; locationPoint<= pointsList.size(); locationPoint++) {
+            for (int locationPoint = 1; locationPoint <= pointsList.size(); locationPoint++) {
                 try {
                     DirectionsResult directionRequestResult = requestDirection(geoApiContext, locationPoint);
                     getEncodedPolylines(directionRequestResult, pathToDraw);
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     Log.e(TAG, ex.getLocalizedMessage());
                 }
                 drawPolyline(pathToDraw);
@@ -87,32 +86,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private GeoApiContext getGeoApiContext (){
+    private GeoApiContext getGeoApiContext() {
         return new GeoApiContext.Builder().apiKey("api_key").build();
     }
 
-    public DirectionsResult requestDirection (GeoApiContext geoApiContext, int locationPoint)
+    public DirectionsResult requestDirection(GeoApiContext geoApiContext, int locationPoint)
             throws ApiException, InterruptedException, IOException {
         return DirectionsApi.newRequest(geoApiContext)
                 .mode(TravelMode.DRIVING)
-                .origin(getModelLatLng(pointsList.get(locationPoint-1)))
+                .origin(getModelLatLng(pointsList.get(locationPoint - 1)))
                 .destination(getModelLatLng(pointsList.get(locationPoint)))
                 .await();
     }
 
-    public void drawPolyline(List<LatLng> path){
+    public void drawPolyline(List<LatLng> path) {
         if (path.size() > 0) {
             PolylineOptions opts = new PolylineOptions().addAll(path).color(Color.RED).width(6);
             mMap.addPolyline(opts);
         }
     }
 
-    public void createAndDisplayToast(String toastText){
+    public void createAndDisplayToast(String toastText) {
         Toast toast = Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_SHORT);
         toast.show();
     }
 
-    public void createMapFragment(){
+    public void createMapFragment() {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -124,7 +123,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return (ArrayList<String>) getIntent().getSerializableExtra("pointsList");
     }
 
-    public List<String> sortLocationList(List<String> unorderedLocations){
+    public List<String> sortLocationList(List<String> unorderedLocations) {
         return new SolveProblem().orderLocations(unorderedLocations);
     }
 
@@ -137,43 +136,65 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return String.valueOf(location.latitude) + "," + location.longitude;
     }
 
-    private void getEncodedPolylines(DirectionsResult res, List<LatLng> path){
+    private void getEncodedPolylines(DirectionsResult directionRequestResult, List<LatLng> path) {
         //Loop through legs and steps to get encoded polylines of each step
-        if (res.routes != null && res.routes.length > 0) {
-            DirectionsRoute route = res.routes[0];
+        DirectionsRoute route = getRouteFromRequest(directionRequestResult);
 
-            if (route.legs != null) {
-                for (int i = 0; i < route.legs.length; i++) {
-                    DirectionsLeg leg = route.legs[i];
-                    if (leg.steps != null) {
-                        for (int j = 0; j < leg.steps.length; j++) {
-                            DirectionsStep step = leg.steps[j];
-                            if (step.steps != null && step.steps.length > 0) {
-                                for (int k = 0; k < step.steps.length; k++) {
-                                    DirectionsStep step1 = step.steps[k];
-                                    EncodedPolyline points1 = step1.polyline;
-                                    if (points1 != null) {
-                                        //Decode polyline and add points to list of route coordinates
-                                        List<com.google.maps.model.LatLng> coords1 = points1.decodePath();
-                                        for (com.google.maps.model.LatLng coord1 : coords1) {
-                                            path.add(new LatLng(coord1.lat, coord1.lng));
-                                        }
-                                    }
-                                }
-                            } else {
-                                EncodedPolyline points = step.polyline;
-                                if (points != null) {
-                                    //Decode polyline and add points to list of route coordinates
-                                    List<com.google.maps.model.LatLng> coords = points.decodePath();
-                                    for (com.google.maps.model.LatLng coord : coords) {
-                                        path.add(new LatLng(coord.lat, coord.lng));
-                                    }
-                                }
-                            }
+        if (route != null && route.legs != null) {
+            for (int i = 0; i < route.legs.length; i++) {
+                DirectionsLeg leg = route.legs[i];
+                if (leg.steps != null) {
+                    for (int j = 0; j < leg.steps.length; j++) {
+                        DirectionsStep step = leg.steps[j];
+                        List<com.google.maps.model.LatLng> coords;
+                        if (step.steps != null && step.steps.length > 0) {
+                            coords = getPolylineForSubsteps(step);
+                        } else {
+                            coords = getPolylineForStep(step);
                         }
+                        addPointsToRouteCoordinatns(coords, path);
                     }
                 }
             }
         }
     }
+
+    private DirectionsRoute getRouteFromRequest(DirectionsResult directionRequestResult) {
+        if (directionRequestResult.routes != null && directionRequestResult.routes.length > 0) {
+            return directionRequestResult.routes[0];
+        }
+        return null;
+    }
+
+    private List<com.google.maps.model.LatLng> decodePolyline(EncodedPolyline points) {
+        return points.decodePath();
+    }
+
+    private void addPointsToRouteCoordinatns(List<com.google.maps.model.LatLng> coords, List<LatLng> path) {
+        for (com.google.maps.model.LatLng coord : coords) {
+            path.add(new LatLng(coord.lat, coord.lng));
+        }
+    }
+
+    private List<com.google.maps.model.LatLng> getPolylineForSubsteps(DirectionsStep step) {
+        for (int k = 0; k < step.steps.length; k++) {
+            DirectionsStep substep = step.steps[k];
+            EncodedPolyline pointsWithSubsteps = substep.polyline;
+            if (pointsWithSubsteps != null) {
+                //Decode polyline and add points to list of route coordinates
+                return decodePolyline(pointsWithSubsteps);
+            }
+        }
+        return null;
+    }
+
+    private List<com.google.maps.model.LatLng> getPolylineForStep(DirectionsStep step) {
+        EncodedPolyline points = step.polyline;
+        if (points != null) {
+            //Decode polyline and add points to list of route coordinates
+            return decodePolyline(points);
+        }
+        return null;
+    }
 }
+

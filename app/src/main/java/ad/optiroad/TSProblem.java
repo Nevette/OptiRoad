@@ -15,11 +15,11 @@ public class TSProblem {
     int initialVertex = 0;
     List<Integer> bestPath;
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         new TSProblem().run();
     }
 
-    public List<Integer> runAlgorithm(int[][] distanceMatrix){
+    public List<Integer> runAlgorithm(int[][] distanceMatrix) {
         neighborhoodMatrix = distanceMatrix;
         numberOfVertices = distanceMatrix.length;
         findShortestPath();
@@ -27,47 +27,46 @@ public class TSProblem {
         return bestPath;
     }
 
-    public void run(){
+    public void run() {
         findShortestPath();
         System.out.println("best distance2: " + bestDistance);
-        for (Integer i : bestPath){
+        for (Integer i : bestPath) {
             System.out.print(i + " ");
         }
     }
 
-    public void findShortestPath(){
+    public void findShortestPath() {
         int currentDistance = 0;
         boolean[] visitedVertices = new boolean[numberOfVertices];
         int currentVertex = initialVertex;
         List<Integer> verticesStack = new ArrayList<>();
-        findShortestPath( currentDistance, visitedVertices, currentVertex, verticesStack);
+        findShortestPath(currentDistance, visitedVertices, currentVertex, verticesStack);
     }
 
     public void findShortestPath(int currentDistance, boolean[] visitedVertices,
-                                 int currentVertex, List<Integer> verticesStack){
+                                 int currentVertex, List<Integer> verticesStack) {
         verticesStack.add(currentVertex);
         System.out.println("current vertex: " + currentVertex);
-        if (verticesStack.size() < numberOfVertices){
+        if (verticesStack.size() < numberOfVertices) {
             visitedVertices[currentVertex] = true;
 
-            for (int neighbor=0; neighbor < numberOfVertices; neighbor++){
-                if (neighbor != currentVertex && !visitedVertices[neighbor]){
+            for (int neighbor = 0; neighbor < numberOfVertices; neighbor++) {
+                if (neighbor != currentVertex && !visitedVertices[neighbor]) {
                     currentDistance += neighborhoodMatrix[currentVertex][neighbor];
                     findShortestPath(currentDistance, visitedVertices, neighbor,
-                                     verticesStack);
+                            verticesStack);
                     currentDistance -= neighborhoodMatrix[currentVertex][neighbor];
                 }
             }
             visitedVertices[currentVertex] = false;
-        }
-        else {
+        } else {
             currentDistance += neighborhoodMatrix[currentVertex][initialVertex];
-            if (currentDistance < bestDistance){
+            if (currentDistance < bestDistance) {
                 bestDistance = currentDistance;
                 bestPath = new ArrayList<>(verticesStack);
             }
             currentDistance -= neighborhoodMatrix[currentVertex][initialVertex];
         }
-        verticesStack.remove(verticesStack.size() -1);
+        verticesStack.remove(verticesStack.size() - 1);
     }
 }

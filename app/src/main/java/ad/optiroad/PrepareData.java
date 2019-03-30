@@ -19,9 +19,9 @@ public class PrepareData {
     public int[][] getDistanceMatrix(List<String> locations) {
         int matrixSize = locations.size();
         int[][] locationsMatrix = new int[matrixSize][matrixSize];
-        for (int i=0; i < locations.size(); i++){
-            for (int j=0; j < locations.size(); j++){
-                if (i == j){
+        for (int i = 0; i < locations.size(); i++) {
+            for (int j = 0; j < locations.size(); j++) {
+                if (i == j) {
                     continue;
                 }
                 int distance = checkDistance(locations.get(i), locations.get(j));
@@ -33,7 +33,7 @@ public class PrepareData {
         return locationsMatrix;
     }
 
-    private int checkDistance(String firstPoint, String secondPoint){
+    private int checkDistance(String firstPoint, String secondPoint) {
         if (firstPoint.equals("Gdańsk") && secondPoint.equals("Warszawa")) return 339;
         if (firstPoint.equals("Kraków") && secondPoint.equals("Warszawa")) return 293;
         if (firstPoint.equals("Gdańsk") && secondPoint.equals("Kraków")) return 583;
@@ -69,10 +69,9 @@ public class PrepareData {
                     // Create connection
                     HttpsURLConnection myConnection = (HttpsURLConnection) mapEndpoint.openConnection();
 
-                    if (myConnection.getResponseCode() == 200){
-                        Log.d("REST","Success: " + myConnection.getResponseMessage());
-                    }
-                    else{
+                    if (myConnection.getResponseCode() == 200) {
+                        Log.d("REST", "Success: " + myConnection.getResponseMessage());
+                    } else {
                         Log.d("REST", "Failure");
                     }
                     InputStream stream = new BufferedInputStream(myConnection.getInputStream());
@@ -85,9 +84,8 @@ public class PrepareData {
                     }
 
                     JSONObject topLevel = new JSONObject(builder.toString());
-                    Log.d("REST", "output: " +  String.valueOf(topLevel));
-                }
-                catch (Exception e) {
+                    Log.d("REST", "output: " + String.valueOf(topLevel));
+                } catch (Exception e) {
                     Log.d("REST", "Exception");
                 }
             }

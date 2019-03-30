@@ -26,7 +26,7 @@ public class Database extends SQLiteOpenHelper {
         super(context, DATABASE, null, DATABASE_VERSION);
     }
 
-    public void addRoute(FavouritesRoutes route){
+    public void addRoute(FavouritesRoutes route) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ROUTE_TITLE, route.getTitle());
@@ -35,18 +35,18 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void saveRoute(FavouritesRoutes route){
+    public void saveRoute(FavouritesRoutes route) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(ROUTE_TITLE, route.getTitle());
         values.put(ROUTE_POINTS, route.getSavedRouteContent());
 
-        db.update(ROUTES_TABLE, values, "id = ?", new String[] {route.getId().toString()});
+        db.update(ROUTES_TABLE, values, "id = ?", new String[]{route.getId().toString()});
         db.close();
     }
 
-    public void deleteRoute(FavouritesRoutes route){
+    public void deleteRoute(FavouritesRoutes route) {
         SQLiteDatabase db = this.getWritableDatabase();
         String sql = "delete from " + ROUTES_TABLE + " where id = " + route.getId().toString();
         System.out.println(sql);
@@ -54,13 +54,13 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
-    public List<FavouritesRoutes> returnAllRoutes(){
+    public List<FavouritesRoutes> returnAllRoutes() {
         List<FavouritesRoutes> favouritesRoutesList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         String sql = "select * from " + ROUTES_TABLE;
         Cursor cursor = db.rawQuery(sql, null);
 
-        if (cursor != null && cursor.moveToFirst()){
+        if (cursor != null && cursor.moveToFirst()) {
             do {
                 FavouritesRoutes route = new FavouritesRoutes();
                 route.setId(Long.parseLong(cursor.getString(0)));
@@ -83,7 +83,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int i, int j){
+    public void onUpgrade(SQLiteDatabase db, int i, int j) {
         String sql = "drop table if exists " + ROUTES_TABLE;
         db.execSQL(sql);
         this.onCreate(db);

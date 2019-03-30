@@ -70,7 +70,7 @@ public class PlanRouteActivity extends AppCompatActivity {
         createAndShowSuccessToast();
     }
 
-    public void createAndShowSuccessToast(){
+    public void createAndShowSuccessToast() {
         Toast toast = Toast.makeText(context, "Route successfully saved", Toast.LENGTH_LONG);
         toast.show();
     }
@@ -102,22 +102,22 @@ public class PlanRouteActivity extends AppCompatActivity {
         addInputViewToLayout(newPoint, params);
     }
 
-    private void addInputViewToLayout(final EditText newPoint, RelativeLayout.LayoutParams params){
+    private void addInputViewToLayout(final EditText newPoint, RelativeLayout.LayoutParams params) {
         layout.addView(newPoint, params);
     }
 
-    private void setIdForNewInput(final EditText newPoint, int id){
+    private void setIdForNewInput(final EditText newPoint, int id) {
         newPoint.setId(id);
     }
 
-    private RelativeLayout.LayoutParams createLayoutForUserInput(){
+    private RelativeLayout.LayoutParams createLayoutForUserInput() {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
         return params;
     }
 
-    private int createInputForStartingPoint(final EditText newPoint){
+    private int createInputForStartingPoint(final EditText newPoint) {
         int id = 1;
         newPoint.setId(id);
         String text = "Type your starting point";
@@ -125,7 +125,7 @@ public class PlanRouteActivity extends AppCompatActivity {
         return id;
     }
 
-    private void clearStartingPointInput(final EditText newPoint){
+    private void clearStartingPointInput(final EditText newPoint) {
         newPoint.setOnClickListener(new EditText.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,7 +139,7 @@ public class PlanRouteActivity extends AppCompatActivity {
     }
 
     private int createNextPointInput(RelativeLayout.LayoutParams params, final EditText newPoint,
-                                     int lastPoint){
+                                     int lastPoint) {
         params.addRule(RelativeLayout.BELOW, lastPoint);
         int id = lastPoint + 1;
         String text = "Type next point";
@@ -147,7 +147,7 @@ public class PlanRouteActivity extends AppCompatActivity {
         return id;
     }
 
-    private void clearNextPointInput(final EditText newPoint){
+    private void clearNextPointInput(final EditText newPoint) {
         newPoint.setOnClickListener(new EditText.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,7 +160,7 @@ public class PlanRouteActivity extends AppCompatActivity {
         });
     }
 
-    private void addIdToPointsList(int id){
+    private void addIdToPointsList(int id) {
         pointsList.add(id);
     }
 
@@ -173,15 +173,14 @@ public class PlanRouteActivity extends AppCompatActivity {
         return locations;
     }
 
-    private String getInputPointsAsString(){
+    private String getInputPointsAsString() {
         String locations = "";
-        int lastPoint = pointsList.size() -1;
+        int lastPoint = pointsList.size() - 1;
         for (int id : pointsList) {
             EditText point = (EditText) findViewById(id);
             if (pointsList.indexOf(id) == lastPoint) {
                 locations += (point.getText().toString());
-            }
-            else {
+            } else {
                 locations += (point.getText().toString()) + ",";
             }
         }
