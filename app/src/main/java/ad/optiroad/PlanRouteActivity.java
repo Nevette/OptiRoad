@@ -24,23 +24,109 @@ public class PlanRouteActivity extends AppCompatActivity {
     private static final String TAG = "PlanRouteActivity";
     private ViewGroup layout;
     private List<Integer> pointsList = new ArrayList();
-
+    private String savedRoutePoints = null;
+    private static final String NEW_POINT_TEXT = "Type next point";
+    private static final String INITIAL_POINT_TEXT = "Type your starting point";
+    private List<AddressLabel> addressLabelList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan_route);
         layout = (ViewGroup) findViewById(R.id.nextPointsLayout);
-        createNewInputPoint();
-
         context = getBaseContext();
         db = new Database(this.getBaseContext());
 
+        savedRoutePoints = openSavedRoute();
+        if (savedRoutePoints == null || savedRoutePoints.isEmpty()) {
+            createInitialAddressLabel();
+        } else {
+            loadSavedRoad(savedRoutePoints);
+        }
+
+        initNavigationButtons();
+    }
+
+    private void loadSavedRoad(String savedRoutePoints) {
+        AddressLabel currentField = null;
+        String[] splittedSavedRoutePoints = savedRoutePoints.split(",");
+
+        for (String city : splittedSavedRoutePoints) {
+            currentField = createAddressLabel(currentField, city);
+            addAddressLabel(currentField);
+        }
+    }
+
+    private void createInitialAddressLabel() {
+        AddressLabel label = createAddressLabel(null, "");
+        addAddressLabel(label);
+    }
+
+    private void createNextAddressLabel() {
+        AddressLabel label = createAddressLabel(addressLabelList.get(addressLabelList.size() - 1), "");
+        addAddressLabel(label);
+    }
+
+    private AddressLabel createAddressLabel(AddressLabel parent, String content) {
+        final EditText field = new EditText(PlanRouteActivity.this);
+        RelativeLayout.LayoutParams params = createLayoutForUserInput();
+
+        int id = 1;
+        if (parent != null) {
+            params.addRule(RelativeLayout.BELOW, parent.getInputFieldId());
+            id = parent.getInputFieldId() + 1;
+            field.setHint(NEW_POINT_TEXT);
+        } else {
+            field.setHint(INITIAL_POINT_TEXT);
+        }
+        field.setId(id);
+        field.setText(content);
+        return new AddressLabel(field, params);
+    }
+
+    private void addAddressLabel(AddressLabel addressLabel) {
+        layout.addView(addressLabel.inputField, addressLabel.layoutParams);
+        pointsList.add(addressLabel.getInputFieldId());
+        addressLabelList.add(addressLabel);
+    }
+
+    private RelativeLayout.LayoutParams createLayoutForUserInput() {
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+        return params;
+    }
+
+    public ArrayList<String> getInputPoints() {
+        ArrayList<String> locations = new ArrayList<>();
+        for (int id : pointsList) {
+            EditText point = (EditText) findViewById(id);
+            locations.add(point.getText().toString());
+        }
+        return locations;
+    }
+
+    private String getInputPointsAsString() {
+        String locations = "";
+        int lastPoint = pointsList.size() - 1;
+        for (int id : pointsList) {
+            EditText point = (EditText) findViewById(id);
+            if (pointsList.indexOf(id) == lastPoint) {
+                locations += (point.getText().toString());
+            } else {
+                locations += (point.getText().toString()) + ",";
+            }
+        }
+        return locations;
+    }
+
+    private void initNavigationButtons() {
         buttonAddNextPoint = (Button) findViewById(R.id.buttonAddNext);
         buttonAddNextPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createNewInputPoint();
+                //createNewInputPoint();
+                createNextAddressLabel();
             }
         });
 
@@ -75,6 +161,14 @@ public class PlanRouteActivity extends AppCompatActivity {
         toast.show();
     }
 
+    public String openSavedRoute() {
+        String savedPoints = (String) getIntent().getSerializableExtra("Route");
+        if (savedPoints != null) {
+            return savedPoints;
+        }
+        return null;
+    }
+
     public void openNavigateActivity() {
         Intent i = new Intent(this, MapsActivity.class);
         // Pass points to MapsActivity
@@ -83,107 +177,17 @@ public class PlanRouteActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    public void createNewInputPoint() {
-        final EditText newPoint = new EditText(PlanRouteActivity.this);
-        RelativeLayout.LayoutParams params = createLayoutForUserInput();
-        int id;
+    private class AddressLabel {
+        EditText inputField;
+        RelativeLayout.LayoutParams layoutParams;
 
-        if (pointsList.isEmpty()) {
-            id = createInputForStartingPoint(newPoint);
-            setIdForNewInput(newPoint, id);
-            clearStartingPointInput(newPoint);
-        } else {
-            int lastPoint = pointsList.get(pointsList.size() - 1);
-            id = createNextPointInput(params, newPoint, lastPoint);
-            clearNextPointInput(newPoint);
-            setIdForNewInput(newPoint, id);
+        public AddressLabel(EditText field, RelativeLayout.LayoutParams params) {
+            this.inputField = field;
+            this.layoutParams = params;
         }
-        addIdToPointsList(id);
-        addInputViewToLayout(newPoint, params);
-    }
 
-    private void addInputViewToLayout(final EditText newPoint, RelativeLayout.LayoutParams params) {
-        layout.addView(newPoint, params);
-    }
-
-    private void setIdForNewInput(final EditText newPoint, int id) {
-        newPoint.setId(id);
-    }
-
-    private RelativeLayout.LayoutParams createLayoutForUserInput() {
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-        return params;
-    }
-
-    private int createInputForStartingPoint(final EditText newPoint) {
-        int id = 1;
-        newPoint.setId(id);
-        String text = "Type your starting point";
-        newPoint.setText(text);
-        return id;
-    }
-
-    private void clearStartingPointInput(final EditText newPoint) {
-        newPoint.setOnClickListener(new EditText.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Delete content of input field and set it to empty
-                String startingPointText = newPoint.getText().toString();
-                if (startingPointText.equals("Type your starting point")) {
-                    newPoint.setText("");
-                }
-            }
-        });
-    }
-
-    private int createNextPointInput(RelativeLayout.LayoutParams params, final EditText newPoint,
-                                     int lastPoint) {
-        params.addRule(RelativeLayout.BELOW, lastPoint);
-        int id = lastPoint + 1;
-        String text = "Type next point";
-        newPoint.setText(text);
-        return id;
-    }
-
-    private void clearNextPointInput(final EditText newPoint) {
-        newPoint.setOnClickListener(new EditText.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Delete content of input field and set it to empty
-                String startingPointText = newPoint.getText().toString();
-                if (startingPointText.equals("Type next point")) {
-                    newPoint.setText("");
-                }
-            }
-        });
-    }
-
-    private void addIdToPointsList(int id) {
-        pointsList.add(id);
-    }
-
-    public ArrayList<String> getInputPoints() {
-        ArrayList<String> locations = new ArrayList<>();
-        for (int id : pointsList) {
-            EditText point = (EditText) findViewById(id);
-            locations.add(point.getText().toString());
+        public Integer getInputFieldId() {
+            return inputField.getId();
         }
-        return locations;
-    }
-
-    private String getInputPointsAsString() {
-        String locations = "";
-        int lastPoint = pointsList.size() - 1;
-        for (int id : pointsList) {
-            EditText point = (EditText) findViewById(id);
-            if (pointsList.indexOf(id) == lastPoint) {
-                locations += (point.getText().toString());
-            } else {
-                locations += (point.getText().toString()) + ",";
-            }
-        }
-        return locations;
     }
 }

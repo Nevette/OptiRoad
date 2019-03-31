@@ -42,12 +42,12 @@ public class FavouritesActivity extends AppCompatActivity {
             Button label = new Button(this);
             createAndAddRouteButton(label, row, route);
             favouritesRoutesLayout.addView(row);
+            label.setOnClickListener(openSavedRoute(route));
 
             Button delete = new Button(this);
             createAndAddDeleteButton(delete, row);
 
             delete.setOnClickListener(deleteRowFromFavourites(route));
-            label.setOnClickListener(openSavedRoute(route));
         }
     }
 
@@ -65,12 +65,12 @@ public class FavouritesActivity extends AppCompatActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openSavedRouteInPlanningMode(savedRouteToOpen);
+                openSavedRouteInPlanningMode(savedRouteToOpen.getSavedRouteContent());
             }
         };
     }
 
-    public void openSavedRouteInPlanningMode(FavouritesRoutes savedRouteToOpen) {
+    public void openSavedRouteInPlanningMode(String savedRouteToOpen) {
         Intent i = new Intent(this, PlanRouteActivity.class);
         i.putExtra("Route", savedRouteToOpen);
         startActivity(i);
