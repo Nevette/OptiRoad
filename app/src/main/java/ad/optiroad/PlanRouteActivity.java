@@ -6,8 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -16,9 +16,7 @@ import java.util.List;
 
 public class PlanRouteActivity extends AppCompatActivity {
 
-    private Button buttonNavigate;
-    private Button buttonAddNextPoint;
-    private Button buttonSave;
+    private ImageView buttonNavigate, buttonAddNextPoint, buttonSave;
     private Database db;
     private Context context;
     private static final String TAG = "PlanRouteActivity";
@@ -121,7 +119,7 @@ public class PlanRouteActivity extends AppCompatActivity {
     }
 
     private void initNavigationButtons() {
-        buttonAddNextPoint = (Button) findViewById(R.id.buttonAddNext);
+        buttonAddNextPoint = (ImageView) findViewById(R.id.buttonAddNext);
         buttonAddNextPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,7 +128,7 @@ public class PlanRouteActivity extends AppCompatActivity {
             }
         });
 
-        buttonNavigate = (Button) findViewById(R.id.buttonNavigate);
+        buttonNavigate = (ImageView) findViewById(R.id.buttonNavigate);
         buttonNavigate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,7 +136,7 @@ public class PlanRouteActivity extends AppCompatActivity {
             }
         });
 
-        buttonSave = (Button) findViewById(R.id.buttonSave);
+        buttonSave = (ImageView) findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
