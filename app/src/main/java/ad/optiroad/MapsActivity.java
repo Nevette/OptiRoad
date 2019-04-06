@@ -55,7 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private GeoApiContext getGeoApiContext() {
-        return new GeoApiContext.Builder().apiKey("AIzaSyAeACHIFPUx5tNjt_93b9LCsTsJUX2CnoE").build();
+        return new GeoApiContext.Builder().apiKey("api_key").build();
     }
 
     public DirectionsResult requestDirection(GeoApiContext geoApiContext, int locationPoint)
