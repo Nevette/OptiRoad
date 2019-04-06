@@ -77,7 +77,7 @@ public class FavouritesActivity extends AppCompatActivity {
     }
 
     private void createAndAddDeleteButton(Button delete, LinearLayout row) {
-        delete.setBackgroundResource(R.drawable.round_button);
+        delete.setBackgroundResource(R.drawable.round_button_2);
         delete.setTextSize(18);
         delete.setText("Delete");
         delete.setClickable(true);
@@ -85,7 +85,7 @@ public class FavouritesActivity extends AppCompatActivity {
     }
 
     private void createAndAddRouteButton(Button label, LinearLayout row, FavouritesRoutes route) {
-        label.setBackgroundResource(R.drawable.round_button);
+        label.setBackgroundResource(R.drawable.round_button_2);
         label.setTextSize(18);
         label.setClickable(true);
         label.setText(route.getTitle());

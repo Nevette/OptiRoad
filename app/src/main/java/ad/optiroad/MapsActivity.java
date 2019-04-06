@@ -3,6 +3,7 @@ package ad.optiroad;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,7 +35,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String TAG = "MapsActivity";
     Geocoder coder;
     private GoogleMap mMap;
-    private List<String> sortedLocations;
     private List<LatLng> pointsList = new ArrayList<>();
 
     @Override
@@ -45,49 +45,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         createMapFragment();
 
         List<String> unorderedLocations = getUnorderedLocationsList();
-        sortedLocations = sortLocationList(unorderedLocations);
-
-        Log.d("Order", "LOCATIONS: " + sortedLocations);
-        createAndDisplayToast("Locations:" + sortedLocations);
+        sortLocationList(unorderedLocations);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        for (String location : sortedLocations) {
-            try {
-                List<Address> positionList = coder.getFromLocationName(location, 1);
-                if ((positionList).size() <= 0) {
-                    createAndDisplayToast("Address was not given. Please try again.");
-                } else {
-                    LatLng point = addressToLatLng(positionList.get(0));
-                    pointsList.add(point);
-                    mMap.addMarker(new MarkerOptions().position(point).title(location));
-                }
-            } catch (Exception e) {
-                createAndDisplayToast("Cannot find given address");
-            }
 
-            List<LatLng> pathToDraw = new ArrayList();
-
-            GeoApiContext geoApiContext = getGeoApiContext();
-
-            for (int locationPoint = 1; locationPoint <= pointsList.size(); locationPoint++) {
-                try {
-                    DirectionsResult directionRequestResult = requestDirection(geoApiContext, locationPoint);
-                    getEncodedPolylines(directionRequestResult, pathToDraw);
-                } catch (Exception ex) {
-                    Log.e(TAG, ex.getLocalizedMessage());
-                }
-                drawPolyline(pathToDraw);
-                mMap.getUiSettings().setZoomControlsEnabled(true);
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pointsList.get(0), 6));
-            }
-        }
     }
 
     private GeoApiContext getGeoApiContext() {
-        return new GeoApiContext.Builder().apiKey("api_key").build();
+        return new GeoApiContext.Builder().apiKey("AIzaSyAeACHIFPUx5tNjt_93b9LCsTsJUX2CnoE").build();
     }
 
     public DirectionsResult requestDirection(GeoApiContext geoApiContext, int locationPoint)
@@ -123,10 +91,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return (ArrayList<String>) getIntent().getSerializableExtra("pointsList");
     }
 
-    public List<String> sortLocationList(List<String> unorderedLocations) {
-        return new SolveProblem().orderLocations(unorderedLocations);
+    public void sortLocationList(List<String> unorderedLocations) {
+        new SolveProblem(this).execute(unorderedLocations);
     }
 
+    public void loadPathOnMap(List<String> sortedLocations){
+        for (String location : sortedLocations) {
+            try {
+                List<Address> positionList = coder.getFromLocationName(location, 1);
+                if ((positionList).size() <= 0) {
+                    createAndDisplayToast("Address was not given. Please try again.");
+                } else {
+                    LatLng point = addressToLatLng(positionList.get(0));
+                    pointsList.add(point);
+                    mMap.addMarker(new MarkerOptions().position(point).title(location));
+                }
+            } catch (Exception e) {
+                createAndDisplayToast("Cannot find given address");
+            }
+
+            List<LatLng> pathToDraw = new ArrayList();
+
+            GeoApiContext geoApiContext = getGeoApiContext();
+
+            for (int locationPoint = 1; locationPoint <= pointsList.size(); locationPoint++) {
+                try {
+                    DirectionsResult directionRequestResult = requestDirection(geoApiContext, locationPoint);
+                    getEncodedPolylines(directionRequestResult, pathToDraw);
+                } catch (Exception ex) {
+                    Log.e(TAG, ex.getLocalizedMessage());
+                }
+                drawPolyline(pathToDraw);
+                mMap.getUiSettings().setZoomControlsEnabled(true);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pointsList.get(0), 6));
+            }
+        }
+    }
 
     private LatLng addressToLatLng(Address address) {
         return new LatLng(address.getLatitude(), address.getLongitude());
