@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class FavouritesActivity extends AppCompatActivity {
             favouritesRoutesLayout.addView(row);
             label.setOnClickListener(openSavedRoute(route));
 
-            Button delete = new Button(this);
+            ImageView delete = new ImageView(this);
             createAndAddDeleteButton(delete, row);
 
             delete.setOnClickListener(deleteRowFromFavourites(route));
@@ -76,17 +77,19 @@ public class FavouritesActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    private void createAndAddDeleteButton(Button delete, LinearLayout row) {
-        delete.setBackgroundResource(R.drawable.round_button_2);
-        delete.setTextSize(18);
-        delete.setText("Delete");
+    private void createAndAddDeleteButton(ImageView delete, LinearLayout row) {
+        delete.setImageResource(R.drawable.ic_menu_delete);
+        delete.setScaleType(ImageView.ScaleType.CENTER);
+        delete.setMinimumHeight(50);
+        delete.setMinimumWidth(50);
         delete.setClickable(true);
         row.addView(delete);
     }
 
     private void createAndAddRouteButton(Button label, LinearLayout row, FavouritesRoutes route) {
         label.setBackgroundResource(R.drawable.round_button_2);
-        label.setTextSize(18);
+        label.setAllCaps(false);
+        label.setTextSize(16);
         label.setClickable(true);
         label.setText(route.getTitle());
         row.addView(label);

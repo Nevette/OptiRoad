@@ -3,8 +3,8 @@
     android:startColor="#424242">
 
     <!--<solid android:color="#ffff"></solid>-->
-    <size android:width="40dp" android:height="20dp"></size>
-    <corners android:radius="10dip"></corners>
+    <size android:width="40dp" android:height="15dp"></size>
+    <corners android:radius="5dip"></corners>
     <stroke android:width="5px" android:color="#ffff"/>
 
 </shape>

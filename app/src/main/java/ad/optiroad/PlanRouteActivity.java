@@ -16,7 +16,7 @@ import java.util.List;
 
 public class PlanRouteActivity extends AppCompatActivity {
 
-    private ImageView buttonNavigate, buttonAddNextPoint, buttonSave, buttonFavourites;
+    private ImageView buttonNavigate, buttonAddNextPoint, buttonSave, buttonFavourites, buttonClear;
     private Database db;
     private Context context;
     private static final String TAG = "PlanRouteActivity";
@@ -104,15 +104,16 @@ public class PlanRouteActivity extends AppCompatActivity {
         return locations;
     }
 
-    private String getInputPointsAsString() {
+    private String getInputPointsForTitle() {
         String locations = "";
         int lastPoint = pointsList.size() - 1;
         for (int id : pointsList) {
             EditText point = (EditText) findViewById(id);
+            if (pointsList.indexOf(id) == 0) {
+                locations += (point.getText().toString()) + ",";
+            }
             if (pointsList.indexOf(id) == lastPoint) {
                 locations += (point.getText().toString());
-            } else {
-                locations += (point.getText().toString()) + ",";
             }
         }
         return locations;
@@ -123,7 +124,6 @@ public class PlanRouteActivity extends AppCompatActivity {
         buttonAddNextPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //createNewInputPoint();
                 createNextAddressLabel();
             }
         });
@@ -152,6 +152,14 @@ public class PlanRouteActivity extends AppCompatActivity {
                 openFavouritesActivity();
             }
         });
+
+        buttonClear = (ImageView) findViewById(R.id.buttonClear);
+        buttonClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearInputPoints();
+            }
+        });
     }
     public void openFavouritesActivity() {
         Intent i = new Intent(this, FavouritesActivity.class);
@@ -160,11 +168,17 @@ public class PlanRouteActivity extends AppCompatActivity {
 
     public void addRouteToFavourites() {
         FavouritesRoutes routeToSave = new FavouritesRoutes();
-        String cities = getInputPointsAsString();
+        String cities = getInputPointsForTitle();
         routeToSave.setContent(cities);
         routeToSave.setTitle(cities);
         db.addRoute(routeToSave);
         createAndShowSuccessToast();
+    }
+
+    private void clearInputPoints() {
+        layout.removeAllViewsInLayout();
+        createInitialAddressLabel();
+
     }
 
     public void createAndShowSuccessToast() {
