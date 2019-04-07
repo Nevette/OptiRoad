@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -99,21 +100,39 @@ public class PlanRouteActivity extends AppCompatActivity {
         ArrayList<String> locations = new ArrayList<>();
         for (int id : pointsList) {
             EditText point = (EditText) findViewById(id);
+            if (point.equals(", ")) {
+                continue;
+            }
             locations.add(point.getText().toString());
         }
+        Log.d("LOCATIONS", "LOCATIONS" + locations);
         return locations;
     }
 
-    private String getInputPointsForTitle() {
-        String locations = "";
+    private String getTitleForRoute() {
+        String title = "";
         int lastPoint = pointsList.size() - 1;
         for (int id : pointsList) {
             EditText point = (EditText) findViewById(id);
             if (pointsList.indexOf(id) == 0) {
-                locations += (point.getText().toString()) + ",";
+                title += (point.getText().toString()) + ", ";
             }
             if (pointsList.indexOf(id) == lastPoint) {
+                title += (point.getText().toString());
+            }
+        }
+        return title;
+    }
+
+    private String getInputPointsAsString() {
+        String locations = "";
+        int lastPoint = pointsList.size() - 1;
+        for (int id : pointsList) {
+            EditText point = (EditText) findViewById(id);
+            if (pointsList.indexOf(id) == lastPoint) {
                 locations += (point.getText().toString());
+            } else {
+                locations += (point.getText().toString()) + ",";
             }
         }
         return locations;
@@ -161,6 +180,7 @@ public class PlanRouteActivity extends AppCompatActivity {
             }
         });
     }
+
     public void openFavouritesActivity() {
         Intent i = new Intent(this, FavouritesActivity.class);
         startActivity(i);
@@ -168,9 +188,10 @@ public class PlanRouteActivity extends AppCompatActivity {
 
     public void addRouteToFavourites() {
         FavouritesRoutes routeToSave = new FavouritesRoutes();
-        String cities = getInputPointsForTitle();
+        String cities = getInputPointsAsString();
         routeToSave.setContent(cities);
-        routeToSave.setTitle(cities);
+        String routeTitle = getTitleForRoute();
+        routeToSave.setTitle(routeTitle);
         db.addRoute(routeToSave);
         createAndShowSuccessToast();
     }

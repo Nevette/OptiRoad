@@ -14,6 +14,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.DirectionsApi;
@@ -104,7 +105,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 } else {
                     LatLng point = addressToLatLng(positionList.get(0));
                     pointsList.add(point);
-                    mMap.addMarker(new MarkerOptions().position(point).title(location));
+                    mMap.addMarker(new MarkerOptions().position(point).title(String.valueOf(sortedLocations.indexOf(location) +1)).draggable(false));
                 }
             } catch (Exception e) {
                 createAndDisplayToast("Cannot find given address");

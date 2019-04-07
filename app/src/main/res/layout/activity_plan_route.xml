@@ -81,7 +81,7 @@
 
         <ImageButton
             android:id="@+id/buttonFavourites"
-            android:layout_width="2dp"
+            android:layout_width="6dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:alpha="100"
@@ -94,7 +94,7 @@
 
         <ImageView
             android:id="@+id/buttonNavigate"
-            android:layout_width="1dp"
+            android:layout_width="8dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:alpha="100"
