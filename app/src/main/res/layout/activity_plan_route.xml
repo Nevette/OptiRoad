@@ -68,11 +68,12 @@
             android:layout_weight="1" />
 
         <ImageButton
-            android:id="@+id/buttonGoToFavourites"
+            android:id="@+id/buttonFavourites"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:alpha="100"
+            android:background="transparent"
             android:src="@android:drawable/btn_star_big_on" />
 
         <Space
@@ -82,7 +83,7 @@
 
         <ImageView
             android:id="@+id/buttonNavigate"
-            android:layout_width="wrap_content"
+            android:layout_width="16dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:alpha="100"

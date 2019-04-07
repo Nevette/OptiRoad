@@ -16,7 +16,7 @@ import java.util.List;
 
 public class PlanRouteActivity extends AppCompatActivity {
 
-    private ImageView buttonNavigate, buttonAddNextPoint, buttonSave;
+    private ImageView buttonNavigate, buttonAddNextPoint, buttonSave, buttonFavourites;
     private Database db;
     private Context context;
     private static final String TAG = "PlanRouteActivity";
@@ -143,6 +143,19 @@ public class PlanRouteActivity extends AppCompatActivity {
                 addRouteToFavourites();
             }
         });
+
+        buttonFavourites = (ImageView) findViewById(R.id.buttonFavourites);
+        buttonFavourites.setImageResource(android.R.color.transparent);
+        buttonFavourites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFavouritesActivity();
+            }
+        });
+    }
+    public void openFavouritesActivity() {
+        Intent i = new Intent(this, FavouritesActivity.class);
+        startActivity(i);
     }
 
     public void addRouteToFavourites() {
