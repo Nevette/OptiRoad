@@ -41,7 +41,7 @@
 
         <ImageView
             android:id="@+id/buttonAddNext"
-            android:layout_width="wrap_content"
+            android:layout_width="16dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:alpha="100"
@@ -55,7 +55,7 @@
 
         <ImageView
             android:id="@+id/buttonSave"
-            android:layout_width="wrap_content"
+            android:layout_width="20dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:alpha="100"
@@ -69,12 +69,11 @@
 
         <ImageButton
             android:id="@+id/buttonFavourites"
-            android:layout_width="wrap_content"
+            android:layout_width="6dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:alpha="100"
-            android:background="transparent"
-            android:src="@android:drawable/btn_star_big_on" />
+            android:background="@android:drawable/btn_star_big_on" />
 
         <Space
             android:layout_width="wrap_content"
@@ -87,8 +86,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:alpha="100"
-            android:background="@android:drawable/ic_menu_directions"
-            android:scaleType="center" />
+            android:scaleType="fitXY"
+            android:src="@android:drawable/ic_menu_directions" />
     </LinearLayout>
 
 </RelativeLayout>
