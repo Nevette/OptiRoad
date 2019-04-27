@@ -168,7 +168,7 @@ public class RoutePlanningActivity extends AppCompatActivity {
         buttonFavourites.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openFavouritesActivity();
+                openFavouriteRoutesActivity();
             }
         });
 
@@ -181,7 +181,7 @@ public class RoutePlanningActivity extends AppCompatActivity {
         });
     }
 
-    public void openFavouritesActivity() {
+    public void openFavouriteRoutesActivity() {
         Intent i = new Intent(this, FavouriteRoutesActivity.class);
         startActivity(i);
     }

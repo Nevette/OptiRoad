@@ -27,10 +27,10 @@ public class FavouriteRoutesActivity extends AppCompatActivity {
         context = this.getBaseContext();
         db = new Database(getBaseContext());
         favouritesRoutesLayout = (LinearLayout) findViewById(R.id.favourites_routes_list);
-        initializeFavourites();
+        initializeFavouriteRoutesActivity();
     }
 
-    public void initializeFavourites() {
+    public void initializeFavouriteRoutesActivity() {
         favouritesRoutesLayout.removeAllViews();
 
         List<Route> routesList = new ArrayList<>();
@@ -43,7 +43,7 @@ public class FavouriteRoutesActivity extends AppCompatActivity {
             Button label = new Button(this);
             createAndAddRouteButton(label, row, route);
             favouritesRoutesLayout.addView(row);
-            label.setOnClickListener(loadSavedRoute(route));
+            label.setOnClickListener(passSavedRouteToPlanningMode(route));
 
             ImageView delete = new ImageView(this);
             createAndAddDeleteButton(delete, row);
@@ -57,21 +57,21 @@ public class FavouriteRoutesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 db.deleteRoute(routeToDelete);
-                initializeFavourites();
+                initializeFavouriteRoutesActivity();
             }
         };
     }
 
-    private View.OnClickListener loadSavedRoute(final Route savedRouteToOpen) {
+    private View.OnClickListener passSavedRouteToPlanningMode(final Route savedRouteToOpen) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openSavedRouteInPlanningMode(savedRouteToOpen.getSavedRouteContent());
+                openRouteInPlanningMode(savedRouteToOpen.getSavedRouteContent());
             }
         };
     }
 
-    public void openSavedRouteInPlanningMode(String savedRouteToOpen) {
+    public void openRouteInPlanningMode(String savedRouteToOpen) {
         Intent i = new Intent(this, RoutePlanningActivity.class);
         i.putExtra("Route", savedRouteToOpen);
         startActivity(i);
