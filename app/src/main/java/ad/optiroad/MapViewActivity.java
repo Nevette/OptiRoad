@@ -3,7 +3,6 @@ package ad.optiroad;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
-import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +13,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.DirectionsApi;
@@ -31,7 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private static final String TAG = "MapsActivity";
     Geocoder coder;
@@ -55,8 +53,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    private GeoApiContext getGeoApiContext() {
-        return new GeoApiContext.Builder().apiKey("api_key").build();
+    public static GeoApiContext getGeoApiContext() {
+        return new GeoApiContext.Builder().apiKey("API_KEY").build();
     }
 
     public DirectionsResult requestDirection(GeoApiContext geoApiContext, int locationPoint)
@@ -93,10 +91,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void sortLocationList(List<String> unorderedLocations) {
-        new SolveProblem(this).execute(unorderedLocations);
+        new ShortestPathCalculatorService(this).execute(unorderedLocations);
     }
 
-    public void loadPathOnMap(List<String> sortedLocations){
+    public void loadPathOnMap(List<String> sortedLocations) {
         for (String location : sortedLocations) {
             try {
                 List<Address> positionList = coder.getFromLocationName(location, 1);
@@ -105,7 +103,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 } else {
                     LatLng point = addressToLatLng(positionList.get(0));
                     pointsList.add(point);
-                    mMap.addMarker(new MarkerOptions().position(point).title(String.valueOf(sortedLocations.indexOf(location) +1)).draggable(false));
+                    mMap.addMarker(new MarkerOptions().position(point).title(String.valueOf(sortedLocations.indexOf(location) + 1)).draggable(false));
                 }
             } catch (Exception e) {
                 createAndDisplayToast("Cannot find given address");
@@ -139,7 +137,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void getEncodedPolylines(DirectionsResult directionRequestResult, List<LatLng> path) {
         //Loop through legs and steps to get encoded polylines of each step
-        DirectionsRoute route = getRouteFromRequest(directionRequestResult);
+        DirectionsRoute route = processDirectionsApiResponse(directionRequestResult);
 
         if (route != null && route.legs != null) {
             for (int i = 0; i < route.legs.length; i++) {
@@ -160,7 +158,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private DirectionsRoute getRouteFromRequest(DirectionsResult directionRequestResult) {
+    private DirectionsRoute processDirectionsApiResponse(DirectionsResult directionRequestResult) {
         if (directionRequestResult.routes != null && directionRequestResult.routes.length > 0) {
             return directionRequestResult.routes[0];
         }

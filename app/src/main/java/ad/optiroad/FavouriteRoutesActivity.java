@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FavouritesActivity extends AppCompatActivity {
+public class FavouriteRoutesActivity extends AppCompatActivity {
 
     private Context context;
     private LinearLayout favouritesRoutesLayout;
@@ -33,17 +33,17 @@ public class FavouritesActivity extends AppCompatActivity {
     public void initializeFavourites() {
         favouritesRoutesLayout.removeAllViews();
 
-        List<FavouritesRoutes> routesList = new ArrayList<>();
-        routesList.addAll(db.returnAllRoutes());
+        List<Route> routesList = new ArrayList<>();
+        routesList.addAll(db.getAllRoutes());
 
-        for (FavouritesRoutes route : routesList) {
+        for (Route route : routesList) {
             LinearLayout row = new LinearLayout(context);
             createLayoutForFavouritesRoutes(row);
 
             Button label = new Button(this);
             createAndAddRouteButton(label, row, route);
             favouritesRoutesLayout.addView(row);
-            label.setOnClickListener(openSavedRoute(route));
+            label.setOnClickListener(loadSavedRoute(route));
 
             ImageView delete = new ImageView(this);
             createAndAddDeleteButton(delete, row);
@@ -52,7 +52,7 @@ public class FavouritesActivity extends AppCompatActivity {
         }
     }
 
-    private View.OnClickListener deleteRowFromFavourites(final FavouritesRoutes routeToDelete) {
+    private View.OnClickListener deleteRowFromFavourites(final Route routeToDelete) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,7 +62,7 @@ public class FavouritesActivity extends AppCompatActivity {
         };
     }
 
-    private View.OnClickListener openSavedRoute(final FavouritesRoutes savedRouteToOpen) {
+    private View.OnClickListener loadSavedRoute(final Route savedRouteToOpen) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,13 +72,12 @@ public class FavouritesActivity extends AppCompatActivity {
     }
 
     public void openSavedRouteInPlanningMode(String savedRouteToOpen) {
-        Intent i = new Intent(this, PlanRouteActivity.class);
+        Intent i = new Intent(this, RoutePlanningActivity.class);
         i.putExtra("Route", savedRouteToOpen);
         startActivity(i);
     }
 
-    private void createAndAddDeleteButton(ImageView delete, LinearLayout row)
-    {
+    private void createAndAddDeleteButton(ImageView delete, LinearLayout row) {
         delete.setImageResource(R.drawable.ic_menu_delete);
         delete.setScaleType(ImageView.ScaleType.CENTER);
         delete.setMinimumHeight(50);
@@ -87,7 +86,7 @@ public class FavouritesActivity extends AppCompatActivity {
         row.addView(delete);
     }
 
-    private void createAndAddRouteButton(Button label, LinearLayout row, FavouritesRoutes route) {
+    private void createAndAddRouteButton(Button label, LinearLayout row, Route route) {
         label.setBackgroundResource(R.drawable.round_button_transparent);
         label.setAllCaps(false);
         label.setTextSize(16);

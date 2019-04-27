@@ -5,23 +5,21 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SolveProblem extends AsyncTask<List<String>, Integer, List<String>> {
-    private final MapsActivity mapsActivity;
+public class ShortestPathCalculatorService extends AsyncTask<List<String>, Integer, List<String>> {
+    private final MapViewActivity mapViewActivity;
 
-    public SolveProblem(MapsActivity mapsActivity) {
-        this.mapsActivity = mapsActivity;
+    public ShortestPathCalculatorService(MapViewActivity mapViewActivity) {
+        this.mapViewActivity = mapViewActivity;
     }
 
     public List<String> orderLocations(List<String> unorderedLocations) {
-
-        int[][] distanceMatrix = new PrepareData().getDistanceMatrix(unorderedLocations);
+        int[][] distanceMatrix = new DistanceMatrixGenerator().getDistanceLocationsMatrix(unorderedLocations);
         List<String> orderedLocations = new ArrayList<>();
-        List<Integer> sortedIndexes = new TSProblem().runAlgorithm(distanceMatrix);
+        List<Integer> sortedIndexes = new TravellingSalesmanProblemSolver().runAlgorithm(distanceMatrix);
 
         for (Integer index : sortedIndexes) {
             orderedLocations.add(unorderedLocations.get(index));
         }
-
         return orderedLocations;
     }
     @Override
@@ -36,6 +34,6 @@ public class SolveProblem extends AsyncTask<List<String>, Integer, List<String>>
 
     @Override
     protected void onPostExecute(List<String> orderLocations){
-        mapsActivity.loadPathOnMap(orderLocations);
+        mapViewActivity.loadPathOnMap(orderLocations);
     }
 }

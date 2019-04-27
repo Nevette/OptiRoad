@@ -26,7 +26,7 @@ public class Database extends SQLiteOpenHelper {
         super(context, DATABASE, null, DATABASE_VERSION);
     }
 
-    public void addRoute(FavouritesRoutes route) {
+    public void addRoute(Route route) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ROUTE_TITLE, route.getTitle());
@@ -35,7 +35,7 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void saveRoute(FavouritesRoutes route) {
+    public void saveRoute(Route route) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -46,7 +46,7 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void deleteRoute(FavouritesRoutes route) {
+    public void deleteRoute(Route route) {
         SQLiteDatabase db = this.getWritableDatabase();
         String sql = "delete from " + ROUTES_TABLE + " where id = " + route.getId().toString();
         System.out.println(sql);
@@ -54,23 +54,23 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
-    public List<FavouritesRoutes> returnAllRoutes() {
-        List<FavouritesRoutes> favouritesRoutesList = new ArrayList<>();
+    public List<Route> getAllRoutes() {
+        List<Route> routeList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         String sql = "select * from " + ROUTES_TABLE;
         Cursor cursor = db.rawQuery(sql, null);
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                FavouritesRoutes route = new FavouritesRoutes();
+                Route route = new Route();
                 route.setId(Long.parseLong(cursor.getString(0)));
                 route.setTitle(cursor.getString(1));
                 route.setContent(cursor.getString(2));
-                favouritesRoutesList.add(route);
+                routeList.add(route);
             }
             while (cursor.moveToNext());
         }
-        return favouritesRoutesList;
+        return routeList;
     }
 
     @Override

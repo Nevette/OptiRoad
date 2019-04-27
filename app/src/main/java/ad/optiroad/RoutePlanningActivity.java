@@ -15,7 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlanRouteActivity extends AppCompatActivity {
+public class RoutePlanningActivity extends AppCompatActivity {
 
     private ImageView buttonNavigate, buttonAddNextPoint, buttonSave, buttonFavourites, buttonClear;
     private Database db;
@@ -24,8 +24,8 @@ public class PlanRouteActivity extends AppCompatActivity {
     private ViewGroup layout;
     private List<Integer> pointsList = new ArrayList();
     private String savedRoutePoints = null;
-    private static final String NEW_POINT_TEXT = "Type next point";
-    private static final String INITIAL_POINT_TEXT = "Type your starting point";
+    private static final String NEW_POINT_TEXT = "Next point";
+    private static final String INITIAL_POINT_TEXT = "Starting point";
     private List<AddressLabel> addressLabelList = new ArrayList<>();
 
     @Override
@@ -67,7 +67,7 @@ public class PlanRouteActivity extends AppCompatActivity {
     }
 
     private AddressLabel createAddressLabel(AddressLabel parent, String content) {
-        final EditText field = new EditText(PlanRouteActivity.this);
+        final EditText field = new EditText(RoutePlanningActivity.this);
         RelativeLayout.LayoutParams params = createLayoutForUserInput();
 
         int id = 1;
@@ -151,7 +151,7 @@ public class PlanRouteActivity extends AppCompatActivity {
         buttonNavigate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openNavigateActivity();
+                openMapViewActivity();
             }
         });
 
@@ -182,12 +182,12 @@ public class PlanRouteActivity extends AppCompatActivity {
     }
 
     public void openFavouritesActivity() {
-        Intent i = new Intent(this, FavouritesActivity.class);
+        Intent i = new Intent(this, FavouriteRoutesActivity.class);
         startActivity(i);
     }
 
     public void addRouteToFavourites() {
-        FavouritesRoutes routeToSave = new FavouritesRoutes();
+        Route routeToSave = new Route();
         String cities = getInputPointsAsString();
         routeToSave.setContent(cities);
         String routeTitle = getTitleForRoute();
@@ -215,8 +215,8 @@ public class PlanRouteActivity extends AppCompatActivity {
         return null;
     }
 
-    public void openNavigateActivity() {
-        Intent i = new Intent(this, MapsActivity.class);
+    public void openMapViewActivity() {
+        Intent i = new Intent(this, MapViewActivity.class);
         // Pass points to MapsActivity
         System.out.println(getInputPoints().toString());
         i.putExtra("pointsList", getInputPoints());

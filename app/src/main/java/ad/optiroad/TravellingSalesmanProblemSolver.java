@@ -3,7 +3,7 @@ package ad.optiroad;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TSProblem {
+public class TravellingSalesmanProblemSolver {
     int bestDistance = Integer.MAX_VALUE;
     int[][] neighborhoodMatrix = {
             {0, 20, 1, 30},
@@ -16,7 +16,7 @@ public class TSProblem {
     List<Integer> bestPath;
 
     public static void main(String[] args) {
-        new TSProblem().run();
+        new TravellingSalesmanProblemSolver().run();
     }
 
     public List<Integer> runAlgorithm(int[][] distanceMatrix) {
